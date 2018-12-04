@@ -1,0 +1,52 @@
+// h 20181204
+//
+// Video Thumb Service
+syntax = "proto3";
+
+package video;
+
+import "google/api/annotations.proto";
+
+message HealthRequest {}
+
+message HealthResponse {
+  bytes health = 1;
+}
+
+message ThumbRequest {
+  string r = 1;
+  string t = 2;
+  string w = 3;
+  string h = 4;
+}
+
+message ThumbResponse {
+  bytes thumb = 1;
+}
+
+message MetaRequest {}
+
+message MetaResponse {
+  bytes meta = 1;
+}
+
+service VdoThuService {
+  rpc Health(HealthRequest) returns (HealthResponse) {
+    option (google.api.http) = {
+      post: "/health"
+      body: "*"
+    };
+  }
+  rpc Thumb(ThumbRequest) returns (ThumbResponse) {
+    option (google.api.http) = {
+      post: "/thumb"
+      body: "*"
+    };
+  }
+  rpc Meta(MetaRequest) returns (MetaResponse) {
+    option (google.api.http) = {
+      post: "/meta"
+      body: "*"
+    };
+  }
+}
