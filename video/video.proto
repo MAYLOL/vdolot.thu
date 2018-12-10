@@ -6,9 +6,10 @@ syntax = "proto3";
 package video;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 
-message HealthRequest {}
-
+/*
+message HealthRequest {}*/
 message HealthResponse {
   bytes health = 1;
 }
@@ -24,14 +25,16 @@ message ThumbResponse {
   bytes thumb = 1;
 }
 
-message MetaRequest {}
+message MetaRequest {
+  string r = 1;
+}
 
 message MetaResponse {
   bytes meta = 1;
 }
 
 service VdoThuService {
-  rpc Health(HealthRequest) returns (HealthResponse) {
+  rpc Health(/*HealthRequest*/google.protobuf.Empty) returns (/*stream */HealthResponse) {
     option (google.api.http) = {
       post: "/health"
       body: "*"
@@ -41,6 +44,9 @@ service VdoThuService {
     option (google.api.http) = {
       post: "/thumb"
       body: "*"
+      additional_bindings {
+        get: "/thumb"
+      }
     };
   }
   rpc Meta(MetaRequest) returns (MetaResponse) {
