@@ -6,12 +6,9 @@ package main
 
 import (
 	"log"
-	"net"
 	"net/http"
 	"os"
-	"strconv"
 
-	"../video"
 	"github.com/gorilla/mux"
 )
 
@@ -19,32 +16,16 @@ import (
 func main() {
 	// Route
 	r := mux.NewRouter()
-	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("ok"))
-	})
-	r.HandleFunc("/thumb", func(w http.ResponseWriter, r *http.Request) {
-		q := r.URL.Query()
-		video.Thumb(w, &video.ThumbRequest{R: q.Get("r"), T: q.Get("t"), W: q.Get("w"), H: q.Get("h")})
-	})
-	r.HandleFunc("/meta", func(w http.ResponseWriter, r *http.Request) {
-		q := r.URL.Query()
-		video.Meta(w, &video.MetaRequest{R: q.Get("r")})
-	})
+	r.HandleFunc("/health", health)
+	r.HandleFunc("/thumb", thumb)
+	r.HandleFunc("/meta", meta)
 	http.Handle("/", r)
-	// Serve
+	// Endpoint
 	port := os.Getenv("PORT")
-	if port == "" {
-		port = strconv.Itoa(randPort())
-	}
-	log.Println("http://localhost:" + port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+	host := os.Getenv("HOST")
+	log.Println(host + ":" + port)
+	// Serve
+	if err := http.ListenAndServe(host+":"+port, nil); err != nil {
 		panic(err)
 	}
-}
-
-// Endpoint
-func randPort() int {
-	l, _ := net.Listen("tcp", ":0")
-	defer l.Close()
-	return l.Addr().(*net.TCPAddr).Port
 }
